@@ -1,0 +1,132 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 16, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: var(--z-onboarding);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.overlay.exiting {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl) 40px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 0 60px rgba(0, 212, 255, 0.1), 0 16px 64px rgba(0, 0, 0, 0.6);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  letter-spacing: 0.08em;
+}
+
+.gestures {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.gestureRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.gestureEmoji {
+  font-size: 1.8rem;
+  line-height: 1;
+  width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.gestureInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gestureName {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 0.06em;
+}
+
+.gestureAction {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.arrow {
+  margin: 0 var(--space-xs);
+  color: var(--text-dim);
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dismissBtn {
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--accent-cyan-glow);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  color: var(--accent-cyan);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dismissBtn:hover {
+  background: rgba(0, 212, 255, 0.25);
+  border-color: var(--accent-cyan);
+}
+
+.countdown {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.progressBar {
+  width: 100%;
+  height: 2px;
+  background: var(--text-dim);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: var(--space-sm);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-cyan);
+  border-radius: 1px;
+  transition: width 0.1s linear;
+}

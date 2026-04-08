@@ -1,0 +1,33 @@
+.hud {
+  position: fixed;
+  bottom: 150px;
+  left: 20px;
+  z-index: var(--z-hud);
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.emoji {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.label {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}

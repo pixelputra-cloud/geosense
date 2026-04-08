@@ -1,0 +1,125 @@
+.cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  opacity: 0.75;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid var(--accent-cyan);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.15s ease, width 0.15s ease, height 0.15s ease;
+}
+
+/* Point gesture — expanding ring */
+.cursor.point .ring {
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+}
+
+.cursor.point .dot {
+  transform: scale(1.5);
+  background: var(--accent-cyan);
+  opacity: 1;
+}
+
+/* Ripple on point gesture */
+.ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--accent-cyan);
+  border-radius: 50%;
+  animation: ripple 0.6s ease-out infinite;
+  opacity: 0;
+}
+
+.cursor.point .ripple {
+  opacity: 1;
+}
+
+/* SVG countdown arc */
+.arcWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cursor.point .arcWrapper {
+  opacity: 1;
+}
+
+.arcBg {
+  fill: none;
+  stroke: rgba(0, 212, 255, 0.2);
+  stroke-width: 2;
+}
+
+.arcFill {
+  fill: none;
+  stroke: var(--accent-cyan);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  stroke-dasharray: 126;
+  stroke-dashoffset: 126;
+  transition: none;
+}
+
+.arcFill.counting {
+  animation: countdownArc 0.4s linear forwards;
+}
+
+/* Pinch gesture — two concentric circles */
+.cursor.pinch .dot {
+  transform: scale(0.6);
+  background: var(--accent-amber);
+}
+
+.pinchOuter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.15s ease, width 0.1s ease, height 0.1s ease;
+}
+
+.cursor.pinch .pinchOuter {
+  opacity: 0.7;
+}
+
+/* Palm gesture */
+.cursor.open_palm .dot {
+  transform: scale(1.2);
+  background: var(--accent-cyan);
+  opacity: 0.9;
+}
