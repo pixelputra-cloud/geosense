@@ -1,21 +1,35 @@
-const MOCK_SUMMARIES = [
-  (name) => `• ${name} continues active diplomatic engagement with regional and global partners, navigating an evolving geopolitical landscape shaped by trade dynamics and security considerations.`,
-  () => `• Economic indicators show resilience in key sectors, with growth in technology and services sectors partially offsetting inflationary pressures affecting households.`,
-  (name) => `• Domestic policy discussions in ${name} are focused on infrastructure modernization, climate adaptation, and social equity — themes that dominate the current legislative agenda.`,
+const MOCK_ARTICLES = (countryName) => [
+  {
+    title: `${countryName} engages in diplomatic talks with regional partners`,
+    link: 'https://www.bbc.com/news/world',
+    source: 'BBC News',
+    pubDate: new Date(Date.now() - 2 * 3600000).toUTCString(),
+  },
+  {
+    title: `Economic outlook in ${countryName} shows resilience amid global pressures`,
+    link: 'https://www.reuters.com/world',
+    source: 'Reuters',
+    pubDate: new Date(Date.now() - 5 * 3600000).toUTCString(),
+  },
+  {
+    title: `${countryName} domestic policy debates focus on infrastructure and climate reform`,
+    link: 'https://apnews.com/world-news',
+    source: 'AP News',
+    pubDate: new Date(Date.now() - 9 * 3600000).toUTCString(),
+  },
 ];
 
 /**
- * Fetch a news summary for a given country from the /api/news proxy.
- * Falls back to mock data if the API is unavailable (e.g., in plain vite dev mode).
+ * Fetch news articles for a given country via the /api/news RSS proxy.
+ * Falls back to mock articles when the API is unavailable (plain vite dev mode).
  * Results are cached in sessionStorage by ISO code.
  */
 export async function fetchNewsSummary(countryName, isoCode) {
   const cacheKey = `geosense_news_${isoCode}`;
 
-  // Check session cache
   try {
     const cached = sessionStorage.getItem(cacheKey);
-    if (cached) return cached;
+    if (cached) return JSON.parse(cached);
   } catch (_) {}
 
   const controller = new AbortController();
@@ -32,16 +46,15 @@ export async function fetchNewsSummary(countryName, isoCode) {
     if (!res.ok) throw new Error(`API error: ${res.status}`);
 
     const data = await res.json();
-    const text = data.summary || data.text || '';
-    if (!text) throw new Error('Empty response');
+    const articles = data.articles;
+    if (!Array.isArray(articles) || !articles.length) throw new Error('Empty response');
 
-    try { sessionStorage.setItem(cacheKey, text); } catch (_) {}
-    return text;
+    try { sessionStorage.setItem(cacheKey, JSON.stringify(articles)); } catch (_) {}
+    return articles;
   } catch (_) {
-    // API unavailable (dev mode without vercel dev, or network error) — use mock data
-    const summary = MOCK_SUMMARIES.map(fn => fn(countryName)).join('\n');
-    try { sessionStorage.setItem(cacheKey, summary); } catch (_) {}
-    return summary;
+    const articles = MOCK_ARTICLES(countryName);
+    try { sessionStorage.setItem(cacheKey, JSON.stringify(articles)); } catch (_) {}
+    return articles;
   } finally {
     clearTimeout(timeout);
   }

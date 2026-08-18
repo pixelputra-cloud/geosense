@@ -122,7 +122,7 @@ const WebcamPreview = forwardRef(function WebcamPreview({ onVideoRef }, ref) {
         {isWebcamActive && <div className={styles.activeDot} />}
 
         <button className={styles.toggleBtn} onClick={toggleWebcamPreview} aria-label="Hide webcam">
-          ✕
+          <span>✕</span>
         </button>
       </div>
     </div>

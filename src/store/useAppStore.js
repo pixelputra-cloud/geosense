@@ -20,7 +20,7 @@ const useAppStore = create((set, get) => ({
   // Country
   selectedCountry: null, // { iso2, iso3, name }
   countryCardState: 'idle', // 'idle' | 'loading' | 'loaded' | 'error'
-  newsSummary: null,
+  newsArticles: [],        // [{ title, link, source, pubDate }]
   countryCache: {},
 
   // UI
@@ -61,25 +61,25 @@ const useAppStore = create((set, get) => ({
     set({
       selectedCountry: country,
       countryCardState: 'loading',
-      newsSummary: null,
+      newsArticles: [],
     }),
 
-  setNewsSummary: (text) =>
-    set({ newsSummary: text, countryCardState: 'loaded' }),
+  setNewsArticles: (articles) =>
+    set({ newsArticles: articles, countryCardState: 'loaded' }),
 
   setNewsError: () =>
     set({ countryCardState: 'error' }),
 
-  cacheNews: (isoCode, text) =>
+  cacheNews: (isoCode, articles) =>
     set((state) => ({
-      countryCache: { ...state.countryCache, [isoCode]: text },
+      countryCache: { ...state.countryCache, [isoCode]: articles },
     })),
 
   dismissCard: () =>
     set({
       selectedCountry: null,
       countryCardState: 'idle',
-      newsSummary: null,
+      newsArticles: [],
     }),
 
   toggleWebcamPreview: () =>

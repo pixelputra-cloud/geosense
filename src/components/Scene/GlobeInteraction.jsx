@@ -43,15 +43,15 @@ export default function GlobeInteraction() {
       const cached = store.countryCache[country.iso2];
       if (cached) {
         store.selectCountry(country);
-        store.setNewsSummary(cached);
+        store.setNewsArticles(cached);
         return;
       }
 
       store.selectCountry(country);
       try {
-        const summary = await fetchNewsSummary(country.name, country.iso2);
-        useAppStore.getState().setNewsSummary(summary);
-        useAppStore.getState().cacheNews(country.iso2, summary);
+        const articles = await fetchNewsSummary(country.name, country.iso2);
+        useAppStore.getState().setNewsArticles(articles);
+        useAppStore.getState().cacheNews(country.iso2, articles);
       } catch (_) {
         useAppStore.getState().setNewsError();
       }
@@ -89,15 +89,15 @@ export default function GlobeInteraction() {
     const cached = store.countryCache[country.iso2];
     if (cached) {
       store.selectCountry(country);
-      store.setNewsSummary(cached);
+      store.setNewsArticles(cached);
       return;
     }
 
     store.selectCountry(country);
     try {
-      const summary = await fetchNewsSummary(country.name, country.iso2);
-      useAppStore.getState().setNewsSummary(summary);
-      useAppStore.getState().cacheNews(country.iso2, summary);
+      const articles = await fetchNewsSummary(country.name, country.iso2);
+      useAppStore.getState().setNewsArticles(articles);
+      useAppStore.getState().cacheNews(country.iso2, articles);
     } catch (_) {
       useAppStore.getState().setNewsError();
     }

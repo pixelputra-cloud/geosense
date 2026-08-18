@@ -1,64 +1,142 @@
+/* ── Overlay ────────────────────────────────────────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 16, 0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(0, 40, 70, 0.7) 0%,
+    rgba(5, 8, 16, 0.94) 70%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: var(--z-onboarding);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 .overlay.exiting {
   animation: fadeOut 0.3s ease forwards;
 }
 
+/* ── Card ───────────────────────────────────────────────────────────────────── */
 .card {
   background: var(--card-bg);
+  background-image: var(--scanlines);
   border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl) 40px;
-  max-width: 440px;
+  border-radius: var(--radius-sm);
+  max-width: 420px;
   width: 90%;
-  box-shadow: 0 0 60px rgba(0, 212, 255, 0.1), 0 16px 64px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: onboardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow:
+    0 0 80px rgba(0, 212, 255, 0.08),
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(0, 212, 255, 0.12);
+  position: relative;
+}
+
+/* Accent top bar */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent-cyan) 40%, var(--accent-gold) 70%, transparent 100%);
+  z-index: 1;
+}
+
+/* Corner bracket — bottom-right */
+.card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid var(--accent-cyan);
+  border-right: 2px solid var(--accent-cyan);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Header section ─────────────────────────────────────────────────────────── */
+.header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 2rem;
+  font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: var(--space-xs);
-  text-align: center;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.versionTag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--accent-cyan);
+  letter-spacing: 0.16em;
+  border: 1px solid var(--accent-cyan-dim);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
 }
 
 .subtitle {
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
   color: var(--text-muted);
-  text-align: center;
-  margin-bottom: var(--space-xl);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
+/* ── Gesture list ───────────────────────────────────────────────────────────── */
 .gestures {
+  padding: 20px 32px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  gap: 0;
 }
 
 .gestureRow {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+}
+
+.gestureRow:last-child {
+  border-bottom: none;
 }
 
 .gestureEmoji {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   line-height: 1;
-  width: 40px;
-  text-align: center;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -66,67 +144,102 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
 }
 
 .gestureName {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   font-weight: 700;
-  color: var(--accent-cyan);
-  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
 }
 
 .gestureAction {
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
   color: var(--text-muted);
+  line-height: 1.4;
 }
 
-.arrow {
-  margin: 0 var(--space-xs);
-  color: var(--text-dim);
+.gestureArrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  opacity: 0.4;
+  flex-shrink: 0;
 }
 
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
 .footer {
+  padding: 16px 32px 20px;
+  border-top: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
 .dismissBtn {
-  padding: var(--space-sm) var(--space-xl);
-  background: var(--accent-cyan-glow);
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
+  width: 100%;
+  padding: 10px 0;
+  background: rgba(0, 212, 255, 0.07);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: var(--radius-sm);
   color: var(--accent-cyan);
-  font-size: 0.75rem;
   font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dismissBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-cyan);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dismissBtn:hover {
-  background: rgba(0, 212, 255, 0.25);
+  color: #07101e;
   border-color: var(--accent-cyan);
 }
 
-.countdown {
-  font-size: 0.6rem;
-  color: var(--text-dim);
-  letter-spacing: 0.08em;
+.dismissBtn:hover::before {
+  transform: translateX(0);
 }
 
+.dismissBtnText {
+  position: relative;
+  z-index: 1;
+}
+
+.countdown {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Progress bar ───────────────────────────────────────────────────────────── */
 .progressBar {
   width: 100%;
-  height: 2px;
+  height: 1px;
   background: var(--text-dim);
   border-radius: 1px;
   overflow: hidden;
-  margin-top: var(--space-sm);
 }
 
 .progressFill {
   height: 100%;
-  background: var(--accent-cyan);
+  background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-gold) 100%);
   border-radius: 1px;
   transition: width 0.1s linear;
 }

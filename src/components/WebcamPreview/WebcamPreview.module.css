@@ -5,23 +5,60 @@
   z-index: var(--z-overlay);
 }
 
+/* ── Preview frame ──────────────────────────────────────────────────────────── */
 .preview {
   position: relative;
   width: 160px;
   height: 120px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--card-border);
-  background: #0a0f1a;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-sm);
+  overflow: visible; /* allow corner brackets to extend */
+  background: #050d1a;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Inner video clip */
+.preview > .video,
+.preview > .canvas,
+.preview > .overlay {
+  border-radius: var(--radius-sm);
+}
+
+/* Corner bracket reticle — top-left */
+.preview::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid var(--accent-cyan);
+  border-left: 2px solid var(--accent-cyan);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Corner bracket reticle — bottom-right */
+.preview::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid var(--accent-cyan);
+  border-right: 2px solid var(--accent-cyan);
+  z-index: 5;
+  pointer-events: none;
 }
 
 .video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scaleX(-1); /* Mirror for natural feel */
+  transform: scaleX(-1);
   opacity: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
 .canvas {
@@ -40,13 +77,16 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-sm);
+  background: rgba(5, 8, 16, 0.7);
+  border-radius: var(--radius-sm);
 }
 
 .statusText {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   color: var(--text-muted);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
 }
 
 .loadingDot {
@@ -54,6 +94,7 @@
   animation: pulse 1s ease-in-out infinite;
 }
 
+/* Live indicator dot */
 .activeDot {
   position: absolute;
   top: 6px;
@@ -62,35 +103,56 @@
   height: 6px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 4px #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  animation: livePulse 2s ease-in-out infinite;
+  z-index: 4;
 }
 
+/* ── Close button — same fill-sweep pattern as CountryCard ──────────────────── */
 .toggleBtn {
   position: absolute;
-  top: -12px;
-  right: -12px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  top: -11px;
+  right: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   color: var(--text-muted);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  backdrop-filter: blur(8px);
+  z-index: 6;
+  overflow: hidden;
   transition: color var(--transition-fast), border-color var(--transition-fast);
-  z-index: 1;
+}
+
+.toggleBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-cyan);
+  transform: translateY(100%);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toggleBtn:hover {
-  color: var(--accent-cyan);
-  border-color: var(--accent-cyan-dim);
+  color: #07101e;
+  border-color: var(--accent-cyan);
 }
 
-/* Collapsed state — only show toggle button */
+.toggleBtn:hover::before {
+  transform: translateY(0);
+}
+
+.toggleBtn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Collapsed state ────────────────────────────────────────────────────────── */
 .collapsed {
   position: fixed;
   bottom: 20px;
@@ -102,37 +164,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
+  padding: 5px 10px;
   background: var(--card-bg);
+  background-image: var(--scanlines);
   border: 1px solid var(--card-border);
-  border-radius: 20px;
+  border-left: 2px solid rgba(0, 212, 255, 0.4);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: color var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.35);
 }
 
 .collapsedBtn:hover {
   color: var(--accent-cyan);
-  border-color: var(--accent-cyan-dim);
-}
-
-.initBtn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--accent-cyan-glow);
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
-  color: var(--accent-cyan);
-  font-size: 0.65rem;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-  font-family: var(--font-mono);
-}
-
-.initBtn:hover {
-  background: rgba(0, 212, 255, 0.25);
+  border-color: rgba(0, 212, 255, 0.4);
+  border-left-color: var(--accent-cyan);
 }

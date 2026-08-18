@@ -3,31 +3,11 @@ import useAppStore from '../../store/useAppStore';
 import styles from './Onboarding.module.css';
 
 const GESTURES = [
-  {
-    emoji: '✋',
-    name: 'Open Palm',
-    action: 'Rotate the Earth',
-  },
-  {
-    emoji: '🖐',
-    name: 'Spread + Push',
-    action: 'Zoom in — move hand closer',
-  },
-  {
-    emoji: '🖐',
-    name: 'Spread + Pull',
-    action: 'Zoom out — move hand further',
-  },
-  {
-    emoji: '🤏',
-    name: 'Pinch & Hold',
-    action: 'Explore a country',
-  },
-  {
-    emoji: '✊',
-    name: 'Fist',
-    action: 'Dismiss / pause',
-  },
+  { emoji: '✋', name: 'Open Palm',     action: 'Rotate the Earth'              },
+  { emoji: '🖐', name: 'Spread + Push', action: 'Zoom in — move hand closer'   },
+  { emoji: '🖐', name: 'Spread + Pull', action: 'Zoom out — move hand further' },
+  { emoji: '🤏', name: 'Pinch & Hold',  action: 'Explore a country'            },
+  { emoji: '✊', name: 'Fist',          action: 'Dismiss / pause'              },
 ];
 
 const AUTO_DISMISS_MS = 4000;
@@ -42,12 +22,9 @@ export default function Onboarding() {
 
   const handleDismiss = () => {
     setExiting(true);
-    setTimeout(() => {
-      dismissOnboarding();
-    }, 300);
+    setTimeout(() => dismissOnboarding(), 300);
   };
 
-  // Auto-dismiss with progress bar
   useEffect(() => {
     if (!showOnboarding) return;
     startTime.current = Date.now();
@@ -77,9 +54,17 @@ export default function Onboarding() {
       onClick={handleDismiss}
     >
       <div className={styles.card} onClick={(e) => e.stopPropagation()}>
-        <h1 className={styles.title}>GeoSense</h1>
-        <p className={styles.subtitle}>GESTURE-CONTROLLED EARTH EXPLORER</p>
 
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <h1 className={styles.title}>GeoSense</h1>
+            <span className={styles.versionTag}>v1.0</span>
+          </div>
+          <p className={styles.subtitle}>Gesture-Controlled Earth Explorer</p>
+        </div>
+
+        {/* Gesture list */}
         <div className={styles.gestures}>
           {GESTURES.map((g) => (
             <div key={g.name} className={styles.gestureRow}>
@@ -88,19 +73,22 @@ export default function Onboarding() {
                 <span className={styles.gestureName}>{g.name}</span>
                 <span className={styles.gestureAction}>{g.action}</span>
               </div>
+              <span className={styles.gestureArrow}>›</span>
             </div>
           ))}
         </div>
 
+        {/* Footer */}
         <div className={styles.footer}>
           <button className={styles.dismissBtn} onClick={handleDismiss}>
-            Start Exploring
+            <span className={styles.dismissBtnText}>Start Exploring</span>
           </button>
           <p className={styles.countdown}>Auto-dismisses in {secondsLeft}s</p>
           <div className={styles.progressBar}>
             <div className={styles.progressFill} style={{ width: `${progress}%` }} />
           </div>
         </div>
+
       </div>
     </div>
   );

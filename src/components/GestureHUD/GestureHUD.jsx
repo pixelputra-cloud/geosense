@@ -22,7 +22,9 @@ export default function GestureHUD() {
   return (
     <div className={styles.hud}>
       <div className={styles.badge}>
+        <span className={styles.indicator} />
         <span className={styles.emoji}>{emoji}</span>
+        <span className={styles.divider} />
         <span className={styles.label}>{label}</span>
       </div>
     </div>

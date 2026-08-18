@@ -1,9 +1,6 @@
 /**
- * Vercel serverless function — Claude API proxy for country news summaries.
- *
- * Currently returns mock data. To enable real AI summaries:
- * 1. Add ANTHROPIC_API_KEY to Vercel environment variables
- * 2. Uncomment the real API call below and remove the mock response
+ * Vercel serverless function — fetches country news from Google News RSS.
+ * No API key required. Parses XML server-side to avoid CORS.
  */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,49 +12,76 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'countryName is required' });
   }
 
-  // ─── REAL ANTHROPIC API (uncomment when ANTHROPIC_API_KEY is set) ───────────
-  // const apiKey = process.env.ANTHROPIC_API_KEY;
-  // if (apiKey) {
-  //   try {
-  //     const response = await fetch('https://api.anthropic.com/v1/messages', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'x-api-key': apiKey,
-  //         'anthropic-version': '2023-06-01',
-  //         'anthropic-beta': 'web-search-2025-03-05',
-  //       },
-  //       body: JSON.stringify({
-  //         model: 'claude-sonnet-4-20250514',
-  //         max_tokens: 300,
-  //         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-  //         system: 'You are a concise geopolitical news assistant. Return 2–3 bullet points summarizing the most important recent news in the given country. Be factual, neutral, and educational. Plain bullet points only, no markdown headers.',
-  //         messages: [{ role: 'user', content: `What is happening in ${countryName} right now?` }],
-  //       }),
-  //     });
-  //     const data = await response.json();
-  //     const text = data.content
-  //       .filter((b) => b.type === 'text')
-  //       .map((b) => b.text)
-  //       .join('\n');
-  //     return res.status(200).json({ summary: text });
-  //   } catch (err) {
-  //     console.error('Claude API error:', err);
-  //   }
-  // }
-  // ─────────────────────────────────────────────────────────────────────────────
+  const query = encodeURIComponent(`${countryName} news`);
+  const rssUrl = `https://news.google.com/rss/search?q=${query}&hl=en&gl=US&ceid=US:en`;
 
-  // Stub response (development / no API key)
-  const stubs = {
-    default: [
-      `• ${countryName} remains engaged in active diplomatic discussions with regional partners, navigating a shifting geopolitical landscape shaped by global economic pressures.`,
-      `• Domestic policy debates continue around infrastructure investment and energy transition, with lawmakers pushing for accelerated timelines on key reform agendas.`,
-      `• Civil society groups have raised concerns over recent legislative measures, prompting national conversations about governance and democratic accountability.`,
-    ],
-  };
+  try {
+    const response = await fetch(rssUrl, {
+      headers: { 'User-Agent': 'GeoSense/1.0 (news aggregator)' },
+      signal: AbortSignal.timeout(7000),
+    });
 
-  const bullets = stubs.default;
-  const summary = bullets.join('\n');
+    if (!response.ok) throw new Error(`RSS fetch failed: ${response.status}`);
 
-  return res.status(200).json({ summary });
+    const xml = await response.text();
+    const articles = parseRSS(xml).slice(0, 4);
+
+    if (!articles.length) throw new Error('No articles parsed');
+
+    return res.status(200).json({ articles });
+  } catch (err) {
+    console.error('[news] RSS error:', err.message);
+    return res.status(502).json({ error: 'Feed unavailable' });
+  }
+}
+
+function parseRSS(xml) {
+  const items = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+
+  while ((match = itemRegex.exec(xml)) !== null) {
+    const block = match[1];
+    const rawTitle = extractTag(block, 'title') || '';
+    const link = extractTag(block, 'link') || '';
+    const source = extractTag(block, 'source') || '';
+    const pubDate = extractTag(block, 'pubDate') || '';
+
+    const { title, inferredSource } = splitTitle(rawTitle);
+    if (title && link) {
+      items.push({ title, link, source: source || inferredSource, pubDate });
+    }
+  }
+
+  return items;
+}
+
+function splitTitle(raw) {
+  // Google News format: "Article title - Source Name"
+  const lastDash = raw.lastIndexOf(' - ');
+  if (lastDash > 10) {
+    return {
+      title: raw.slice(0, lastDash).trim(),
+      inferredSource: raw.slice(lastDash + 3).trim(),
+    };
+  }
+  return { title: raw, inferredSource: '' };
+}
+
+function extractTag(xml, tag) {
+  const cdata = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`).exec(xml);
+  if (cdata) return cdata[1].trim();
+  const plain = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`).exec(xml);
+  return plain ? decodeEntities(plain[1].trim()) : null;
+}
+
+function decodeEntities(text) {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/<[^>]+>/g, '')
+    .trim();
 }

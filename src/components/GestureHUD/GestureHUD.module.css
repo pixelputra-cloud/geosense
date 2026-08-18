@@ -9,25 +9,44 @@
 .badge {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-md);
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
   background: var(--card-bg);
+  background-image: var(--scanlines);
   border: 1px solid var(--card-border);
-  border-radius: 20px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  font-size: 0.7rem;
-  color: var(--accent-cyan);
-  letter-spacing: 0.06em;
+  border-left: 2px solid var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), -3px 0 16px rgba(0, 212, 255, 0.07);
+}
+
+.indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  animation: livePulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 .emoji {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1;
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: var(--card-border);
+  flex-shrink: 0;
 }
 
 .label {
   font-family: var(--font-mono);
+  font-size: 0.62rem;
   color: var(--text-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
